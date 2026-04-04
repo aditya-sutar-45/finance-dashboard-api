@@ -38,7 +38,7 @@ func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create token
-	accessToken, accessClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 15*time.Minute)
+	accessToken, accessClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 2*time.Hour)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating the token: %v", err))
 		return
