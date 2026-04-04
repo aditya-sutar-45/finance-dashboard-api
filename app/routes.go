@@ -36,24 +36,36 @@ func loadRoutes(db *database.Queries, secretKey string) *chi.Mux {
 }
 
 func loadRecordRoutes(router chi.Router, h *handler.Handler) {
-	router.Post("/", h.CreateRecord)
+	tokenMaker := h.TokenMaker
+
+	router.Use(handler.GetAuthMiddlwareFunc(tokenMaker))
+
 	router.Get("/", h.GetRecords)
 	router.Get("/{id}", h.GetRecordByID)
-	router.Put("/{id}", h.UpdateRecordByID)
-	router.Delete("/{id}", h.DeleteRecordByID)
+
+	router.With(handler.RequireRole("analyst", "admin")).Post("/", h.CreateRecord)
+	router.With(handler.RequireRole("analyst", "admin")).Put("/{id}", h.UpdateRecordByID)
+
+	router.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteRecordByID)
 }
 
 func loadAuthRoutes(router chi.Router, h *handler.Handler) {
+	// Public
 	router.Post("/", h.CreateUser)
-	router.Get("/", h.ListUsers)
-
 	router.Post("/login", h.LoginUser)
-	router.Get("/logout/{id}", h.LogoutUser)
 
-	router.Route("/tokens", func(r chi.Router) {
-		r.Post("/renew", h.RenewAccessToken)
-		r.Post("/revoke/{id}", h.RevokeSession)
+	//  Refresh token endpoint
+	router.Post("/tokens/renew", h.RenewAccessToken)
+
+	// Protected routes
+	router.Group(func(r chi.Router) {
+		r.Use(handler.GetAuthMiddlwareFunc(h.TokenMaker))
+
+		r.Get("/logout", h.LogoutUser)
+
+		r.Post("/tokens/revoke", h.RevokeSession)
+
+		r.With(handler.RequireRole("admin")).Get("/", h.ListUsers)
+		r.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteUser)
 	})
-
-	router.Delete("/{id}", h.DeleteUser)
 }

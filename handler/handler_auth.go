@@ -9,8 +9,8 @@ import (
 
 	"github.com/aditya-sutar-45/finance-dashboard-api/internal/database"
 	"github.com/aditya-sutar-45/finance-dashboard-api/models"
+	"github.com/aditya-sutar-45/finance-dashboard-api/token"
 	"github.com/aditya-sutar-45/finance-dashboard-api/utils"
-	"github.com/go-chi/chi/v5"
 )
 
 func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
@@ -38,14 +38,14 @@ func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create token
-	accessToken, accessClaims, err := h.tokenMaker.CreateToken(user.ID, user.Email, user.Role, 15*time.Minute)
+	accessToken, accessClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 15*time.Minute)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating the token: %v", err))
 		return
 	}
 
 	// refresh token
-	refreshToken, refreshClaims, err := h.tokenMaker.CreateToken(user.ID, user.Email, user.Role, 24*time.Hour)
+	refreshToken, refreshClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 24*time.Hour)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating the token: %v", err))
 		return
@@ -81,20 +81,21 @@ func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) LogoutUser(w http.ResponseWriter, r *http.Request) {
-	// TODOD: get the session id from token payload of authenticated user
-	id := chi.URLParam(r, "id")
-	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "missing session id")
-		return
-	}
+	claims := r.Context().Value(authKey{}).(*token.UserClaims)
 
-	err := h.DB.DeleteSession(r.Context(), id)
+	err := h.DB.DeleteSession(r.Context(), claims.ID.String())
 	if err != nil {
 		utils.RespondWithError(w, http.StatusNotFound, "session does not exist")
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusNoContent, struct{}{})
+	type Res struct {
+		Message string `json:"message"`
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, Res{
+		Message: "logout success",
+	})
 }
 
 func (h *Handler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +109,7 @@ func (h *Handler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	refreshClaims, err := h.tokenMaker.VerifyToken(params.RefreshToken)
+	refreshClaims, err := h.TokenMaker.VerifyToken(params.RefreshToken)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusUnauthorized, "error verifying token")
 		return
@@ -130,7 +131,7 @@ func (h *Handler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accessToken, accessClaims, err := h.tokenMaker.CreateToken(refreshClaims.ID, refreshClaims.Email, refreshClaims.Role, 15*time.Minute)
+	accessToken, accessClaims, err := h.TokenMaker.CreateToken(refreshClaims.ID, refreshClaims.Email, refreshClaims.Role, 15*time.Minute)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "error creating token")
 		return
@@ -145,13 +146,9 @@ func (h *Handler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RevokeSession(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "missing session id")
-		return
-	}
+	claims := r.Context().Value(authKey{}).(*token.UserClaims)
 
-	err := h.DB.RevokeSession(r.Context(), id)
+	err := h.DB.RevokeSession(r.Context(), claims.RegisteredClaims.ID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusNotFound, "session not found")
 		return

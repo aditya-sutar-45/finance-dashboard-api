@@ -1,8 +1,13 @@
 package handler
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 func (h *Handler) CreateRecord(w http.ResponseWriter, r *http.Request) {
+	userID := getUserIDFromClaims(r)
+	fmt.Println(userID)
 }
 
 func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
