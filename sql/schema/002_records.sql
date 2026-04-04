@@ -1,7 +1,7 @@
 -- +goose up
 CREATE TABLE records (
   id UUID PRIMARY KEY,
-  user_id UUID NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   amount NUMERIC NOT NULL,
   type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
   category TEXT NOT NULL,

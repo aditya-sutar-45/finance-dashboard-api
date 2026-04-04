@@ -19,7 +19,7 @@ type App struct {
 	DB     *database.Queries
 }
 
-func New(port string, dbURL string) (*App, error) {
+func New(port string, dbURL string, secretKey string) (*App, error) {
 	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to the database: %w", err)
@@ -29,7 +29,7 @@ func New(port string, dbURL string) (*App, error) {
 
 	app := &App{
 		port:   port,
-		router: loadRoutes(db),
+		router: loadRoutes(db, secretKey),
 		DB:     db,
 	}
 

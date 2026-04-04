@@ -24,11 +24,15 @@ func main() {
 	if portString == "" {
 		log.Fatalln("PORT is not found in the env")
 	}
+	secretKey := os.Getenv("SECRET_KEY")
+	if portString == "" {
+		log.Fatalln("SECRET_KEY is not found in the env")
+	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	app, err := app.New(portString, dbURL)
+	app, err := app.New(portString, dbURL, secretKey)
 	if err != nil {
 		log.Println("failed to create the app", err)
 	}

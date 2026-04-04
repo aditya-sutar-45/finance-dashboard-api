@@ -23,3 +23,23 @@ type Record struct {
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
 }
+
+type Session struct {
+	ID           string
+	UserEmail    string
+	RefreshToken string
+	IsRevoked    bool
+	CreatedAt    sql.NullTime
+	ExpiresAt    sql.NullTime
+}
+
+type User struct {
+	ID           uuid.UUID
+	Name         string
+	Email        string
+	PasswordHash string
+	Role         string
+	CreatedAt    sql.NullTime
+	UpdatedAt    sql.NullTime
+	DeletedAt    sql.NullTime
+}
