@@ -72,17 +72,11 @@ const deleteRecordByID = `-- name: DeleteRecordByID :exec
 UPDATE records
 SET deleted_at = NOW()
 WHERE id = $1
-  AND user_id = $2
   AND deleted_at IS NULL
 `
 
-type DeleteRecordByIDParams struct {
-	ID     uuid.UUID
-	UserID uuid.UUID
-}
-
-func (q *Queries) DeleteRecordByID(ctx context.Context, arg DeleteRecordByIDParams) error {
-	_, err := q.db.ExecContext(ctx, deleteRecordByID, arg.ID, arg.UserID)
+func (q *Queries) DeleteRecordByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteRecordByID, id)
 	return err
 }
 

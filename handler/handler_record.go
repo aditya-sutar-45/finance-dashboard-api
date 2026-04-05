@@ -292,4 +292,24 @@ func (h *Handler) UpdateRecordByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteRecordByID(w http.ResponseWriter, r *http.Request) {
+	idString := chi.URLParam(r, "id")
+	recordID, err := uuid.Parse(idString)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "invalid record id")
+		return
+	}
+
+	err = h.DB.DeleteRecordByID(r.Context(), recordID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "error deleting record")
+		return
+	}
+
+	type res struct {
+		Message string `json:"message"`
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, res{
+		Message: "successfully deleted",
+	})
 }
