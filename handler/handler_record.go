@@ -14,6 +14,7 @@ import (
 	"github.com/aditya-sutar-45/finance-dashboard-api/internal/database"
 	"github.com/aditya-sutar-45/finance-dashboard-api/models"
 	"github.com/aditya-sutar-45/finance-dashboard-api/utils"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -239,6 +240,55 @@ func (h *Handler) GetRecordByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UpdateRecordByID(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Amount   *string    `json:"amount"`
+		Type     *string    `json:"type"`
+		Category *string    `json:"category"`
+		Note     *string    `json:"note"`
+		Date     *time.Time `json:"date"`
+	}
+	var params parameters
+	idString := chi.URLParam(r, "id")
+	recordID, err := uuid.Parse(idString)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "invalid record id")
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	record, err := h.DB.PatchRecordByID(r.Context(), database.PatchRecordByIDParams{
+		ID: recordID,
+		Amount: sql.NullString{
+			String: utils.GetString(params.Amount),
+			Valid:  params.Amount != nil,
+		},
+		Type: sql.NullString{
+			String: utils.GetString(params.Type),
+			Valid:  params.Type != nil,
+		},
+		Category: sql.NullString{
+			String: utils.GetString(params.Category),
+			Valid:  params.Category != nil,
+		},
+		Note: sql.NullString{
+			String: utils.GetString(params.Note),
+			Valid:  params.Note != nil,
+		},
+		Date: sql.NullTime{
+			Time:  utils.GetTime(params.Date),
+			Valid: params.Date != nil,
+		},
+	})
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "failed to update record")
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
 }
 
 func (h *Handler) DeleteRecordByID(w http.ResponseWriter, r *http.Request) {

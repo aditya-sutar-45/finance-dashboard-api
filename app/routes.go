@@ -44,7 +44,7 @@ func loadRecordRoutes(router chi.Router, h *handler.Handler) {
 	router.Get("/", h.GetRecords)
 
 	router.With(handler.RequireRole("admin")).Post("/", h.CreateRecord)
-	router.With(handler.RequireRole("admin")).Put("/{id}", h.UpdateRecordByID)
+	router.With(handler.RequireRole("admin")).Patch("/{id}", h.UpdateRecordByID)
 	router.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteRecordByID)
 }
 
