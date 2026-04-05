@@ -2,6 +2,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/aditya-sutar-45/finance-dashboard-api/internal/database"
@@ -21,8 +22,11 @@ func NewHandler(db *database.Queries, secretKey string) *Handler {
 	}
 }
 
-func getUserIDFromClaims(r *http.Request) uuid.UUID {
+func getUserIDFromClaims(r *http.Request) (uuid.UUID, string, error) {
 	claims := r.Context().Value(authKey{}).(*token.UserClaims)
+	if claims == nil {
+		return uuid.Nil, "", fmt.Errorf("claims not found in context")
+	}
 
-	return claims.ID
+	return claims.ID, claims.Role, nil
 }

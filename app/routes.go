@@ -40,12 +40,11 @@ func loadRecordRoutes(router chi.Router, h *handler.Handler) {
 
 	router.Use(handler.GetAuthMiddlwareFunc(tokenMaker))
 
-	router.Get("/", h.GetRecords)
 	router.Get("/{id}", h.GetRecordByID)
+	router.Get("/", h.GetRecords)
 
-	router.With(handler.RequireRole("analyst", "admin")).Post("/", h.CreateRecord)
-	router.With(handler.RequireRole("analyst", "admin")).Put("/{id}", h.UpdateRecordByID)
-
+	router.With(handler.RequireRole("admin")).Post("/", h.CreateRecord)
+	router.With(handler.RequireRole("admin")).Put("/{id}", h.UpdateRecordByID)
 	router.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteRecordByID)
 }
 

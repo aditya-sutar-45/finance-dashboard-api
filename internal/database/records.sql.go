@@ -17,18 +17,309 @@ const createRecord = `-- name: CreateRecord :one
 INSERT INTO records (
   id,
   user_id,
+  created_by,
   amount,
   type,
   category,
   note,
   date
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
-RETURNING id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at
+RETURNING id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
 `
 
 type CreateRecordParams struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	CreatedBy uuid.NullUUID
+	Amount    string
+	Type      string
+	Category  string
+	Note      sql.NullString
+	Date      time.Time
+}
+
+func (q *Queries) CreateRecord(ctx context.Context, arg CreateRecordParams) (Record, error) {
+	row := q.db.QueryRowContext(ctx, createRecord,
+		arg.ID,
+		arg.UserID,
+		arg.CreatedBy,
+		arg.Amount,
+		arg.Type,
+		arg.Category,
+		arg.Note,
+		arg.Date,
+	)
+	var i Record
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Amount,
+		&i.Type,
+		&i.Category,
+		&i.Note,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+	)
+	return i, err
+}
+
+const deleteRecordByID = `-- name: DeleteRecordByID :exec
+UPDATE records
+SET deleted_at = NOW()
+WHERE id = $1
+  AND user_id = $2
+  AND deleted_at IS NULL
+`
+
+type DeleteRecordByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteRecordByID(ctx context.Context, arg DeleteRecordByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteRecordByID, arg.ID, arg.UserID)
+	return err
+}
+
+const getRecordByID = `-- name: GetRecordByID :one
+SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
+FROM records
+WHERE id = $1
+  AND user_id = $2
+  AND deleted_at IS NULL
+`
+
+type GetRecordByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) GetRecordByID(ctx context.Context, arg GetRecordByIDParams) (Record, error) {
+	row := q.db.QueryRowContext(ctx, getRecordByID, arg.ID, arg.UserID)
+	var i Record
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Amount,
+		&i.Type,
+		&i.Category,
+		&i.Note,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+	)
+	return i, err
+}
+
+const hardDeleteRecordByID = `-- name: HardDeleteRecordByID :exec
+DELETE FROM records
+WHERE id = $1 AND user_id = $2
+`
+
+type HardDeleteRecordByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) HardDeleteRecordByID(ctx context.Context, arg HardDeleteRecordByIDParams) error {
+	_, err := q.db.ExecContext(ctx, hardDeleteRecordByID, arg.ID, arg.UserID)
+	return err
+}
+
+const listAllRecords = `-- name: ListAllRecords :many
+SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
+FROM records
+WHERE ($1::UUID IS NULL OR user_id = $1::UUID)
+  AND ($2::TEXT IS NULL OR type = $2::TEXT)
+  AND ($3::TEXT IS NULL OR category = $3::TEXT)
+  AND ($4::DATE IS NULL OR date >= $4::DATE)
+  AND ($5::DATE IS NULL OR date <= $5::DATE)
+  AND deleted_at IS NULL
+ORDER BY date DESC
+`
+
+type ListAllRecordsParams struct {
+	UserID    uuid.NullUUID
+	Type      sql.NullString
+	Category  sql.NullString
+	StartDate sql.NullTime
+	EndDate   sql.NullTime
+}
+
+func (q *Queries) ListAllRecords(ctx context.Context, arg ListAllRecordsParams) ([]Record, error) {
+	rows, err := q.db.QueryContext(ctx, listAllRecords,
+		arg.UserID,
+		arg.Type,
+		arg.Category,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Record
+	for rows.Next() {
+		var i Record
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Amount,
+			&i.Type,
+			&i.Category,
+			&i.Note,
+			&i.Date,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.CreatedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listRecords = `-- name: ListRecords :many
+SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
+FROM records
+WHERE user_id = $1
+  AND ($2::TEXT IS NULL OR type = $2::TEXT)
+  AND ($3::TEXT IS NULL OR category = $3::TEXT)
+  AND ($4::DATE IS NULL OR date >= $4::DATE)
+  AND ($5::DATE IS NULL OR date <= $5::DATE)
+  AND deleted_at IS NULL
+ORDER BY date DESC
+`
+
+type ListRecordsParams struct {
+	UserID    uuid.UUID
+	Type      sql.NullString
+	Category  sql.NullString
+	StartDate sql.NullTime
+	EndDate   sql.NullTime
+}
+
+func (q *Queries) ListRecords(ctx context.Context, arg ListRecordsParams) ([]Record, error) {
+	rows, err := q.db.QueryContext(ctx, listRecords,
+		arg.UserID,
+		arg.Type,
+		arg.Category,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Record
+	for rows.Next() {
+		var i Record
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Amount,
+			&i.Type,
+			&i.Category,
+			&i.Note,
+			&i.Date,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.CreatedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const patchRecordByID = `-- name: PatchRecordByID :one
+UPDATE records
+SET
+  amount = COALESCE($1::NUMERIC, amount),
+  type = COALESCE($2::TEXT, type),
+  category = COALESCE($3::TEXT, category),
+  note = COALESCE($4::TEXT, note),
+  date = COALESCE($5::TIMESTAMP, date),
+  updated_at = NOW()
+WHERE id = $6
+  AND deleted_at IS NULL
+RETURNING id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
+`
+
+type PatchRecordByIDParams struct {
+	Amount   sql.NullString
+	Type     sql.NullString
+	Category sql.NullString
+	Note     sql.NullString
+	Date     sql.NullTime
+	ID       uuid.UUID
+}
+
+func (q *Queries) PatchRecordByID(ctx context.Context, arg PatchRecordByIDParams) (Record, error) {
+	row := q.db.QueryRowContext(ctx, patchRecordByID,
+		arg.Amount,
+		arg.Type,
+		arg.Category,
+		arg.Note,
+		arg.Date,
+		arg.ID,
+	)
+	var i Record
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Amount,
+		&i.Type,
+		&i.Category,
+		&i.Note,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+	)
+	return i, err
+}
+
+const updateRecordByID = `-- name: UpdateRecordByID :one
+UPDATE records
+SET
+  amount = $3,
+  type = $4,
+  category = $5,
+  note = $6,
+  date = $7,
+  updated_at = NOW()
+WHERE id = $1
+  AND user_id = $2
+  AND deleted_at IS NULL
+RETURNING id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
+`
+
+type UpdateRecordByIDParams struct {
 	ID       uuid.UUID
 	UserID   uuid.UUID
 	Amount   string
@@ -38,8 +329,8 @@ type CreateRecordParams struct {
 	Date     time.Time
 }
 
-func (q *Queries) CreateRecord(ctx context.Context, arg CreateRecordParams) (Record, error) {
-	row := q.db.QueryRowContext(ctx, createRecord,
+func (q *Queries) UpdateRecordByID(ctx context.Context, arg UpdateRecordByIDParams) (Record, error) {
+	row := q.db.QueryRowContext(ctx, updateRecordByID,
 		arg.ID,
 		arg.UserID,
 		arg.Amount,
@@ -60,6 +351,7 @@ func (q *Queries) CreateRecord(ctx context.Context, arg CreateRecordParams) (Rec
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.CreatedBy,
 	)
 	return i, err
 }

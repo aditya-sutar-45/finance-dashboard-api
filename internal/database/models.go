@@ -22,6 +22,7 @@ type Record struct {
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	CreatedBy uuid.NullUUID
 }
 
 type Session struct {
