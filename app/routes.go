@@ -78,8 +78,8 @@ func loadDashboardRoutes(router chi.Router, h *handler.Handler) {
 	tokenMaker := h.TokenMaker
 	router.Use(handler.GetAuthMiddlwareFunc(tokenMaker))
 
-	router.Get("/summary", h.GetDashboardSummary)
-	router.Get("/categories", h.GetCategoryAnalysis)
-	router.Get("/trends", h.GetTrends)
-	router.Get("/recent", h.GetRecent)
+	router.With(handler.RequireRole(token.RoleViewer)).Get("/summary", h.GetDashboardSummary)
+	router.With(handler.RequireRole(token.RoleViewer)).Get("/categories", h.GetCategoryAnalysis)
+	router.With(handler.RequireRole(token.RoleViewer)).Get("/trends", h.GetTrends)
+	router.With(handler.RequireRole(token.RoleViewer)).Get("/recent", h.GetRecent)
 }
