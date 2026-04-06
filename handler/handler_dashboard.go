@@ -87,7 +87,7 @@ func (h *Handler) GetCategoryAnalysis(w http.ResponseWriter, r *http.Request) {
 
 	data, err := h.DB.GetCategoryAnalysis(r.Context(), uID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch summary")
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("failed to fetch summary:\n %v", err))
 		return
 	}
 

@@ -68,7 +68,7 @@ func loadAuthRoutes(router chi.Router, h *handler.Handler) {
 
 		r.Post("/tokens/revoke", h.RevokeSession)
 
-		router.With(handler.RequireRole(token.RoleAdmin)).Post("/", h.CreateUser)
+		r.With(handler.RequireRole(token.RoleAdmin)).Post("/", h.CreateUser)
 		r.With(handler.RequireRole(token.RoleAdmin)).Get("/", h.ListUsers)
 		r.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}", h.DeleteUser)
 	})
