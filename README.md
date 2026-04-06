@@ -133,7 +133,7 @@ This project demonstrates backend development skills including API design, busin
 │   ├── records.json
 │   └── seed.js
 
-├── api/                   # API collections (Postman)
+├── api-docs/                   # API collections (Postman)
 ├── sqlc.yaml              # SQLC configuration
 └── README.md
 ```

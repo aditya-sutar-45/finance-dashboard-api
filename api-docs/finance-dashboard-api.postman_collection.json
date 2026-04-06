@@ -1,0 +1,1822 @@
+{
+  "info": {
+    "_postman_id": "3b6f3090-a628-446f-b144-cedd92844f3f",
+    "name": "finance-dashboard-api",
+    "description": "# Finance Dashboard API\n\nThis collection contains the full set of REST API endpoints for the **Finance Dashboard** application, running locally at `http://localhost:3000`. It is organized into three functional groups:\n\n### Auth\n\nHandles user identity and session management. Includes endpoints for:\n\n- **Login / Logout** – Authenticate users and terminate sessions.\n    \n- **Create / Get / Delete User** – Manage user accounts, including soft and hard deletes.\n    \n- **Deleted Users List** – Retrieve users that have been soft-deleted.\n    \n- **Renew Access Token** – Refresh authentication tokens to maintain active sessions.\n    \n\n### Records\n\nManages financial transaction records associated with users. Includes endpoints for:\n\n- **Get Records** – Retrieve records, with support for query filters.\n    \n- **Create Record** – Add a new financial transaction (amount, type, category, date).\n    \n- **Update / Delete Record** – Modify or soft-delete existing records.\n    \n- **Get Deleted Records** – Fetch soft-deleted records.\n    \n- **Hard Delete Record** – Permanently remove a record from the system.\n    \n\n### Dashboard\n\nProvides aggregated financial insights for a given user. Includes endpoints for:\n\n- **Summary / Overview** – High-level financial summary.\n    \n- **Trends** – Time-series data for tracking financial patterns.\n    \n- **Categories** – Breakdown of transactions by category.\n    \n\n---\n\n> **Base URL:** `http://localhost:3000`  \n**Auth:** Token-based authentication using `access_token` and `access_token_viewer` environment variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53787747",
+    "_collection_link": "https://go.postman.co/collection/53787747-3b6f3090-a628-446f-b144-cedd92844f3f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// {\n    // \"email\": \"admin@gmail.com\",\n    // \"password\": \"admin\"\n// }\n{\n    \"email\": \"view@example.com\",\n    \"password\": \"viewer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "login"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Login",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "// {\n    // \"email\": \"admin@gmail.com\",\n    // \"password\": \"admin\"\n// }\n{\n    \"email\": \"view@example.com\",\n    \"password\": \"viewer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:38:01 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1074"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"session_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk5OGRlNDM3LWU2NTgtNGRjNS05Y2M0LTc1MmUyNmQxOGFkMSIsImVtYWlsIjoidmlld0BleGFtcGxlLmNvbSIsInJvbGUiOiJ2aWV3ZXIiLCJzdWIiOiJ2aWV3QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc1NDg2MjgxLCJpYXQiOjE3NzU0NzkwODEsImp0aSI6IjIzOGEyYmZiLWM2OWYtNDFkZi1hOTk0LWExM2ZkNzVmNTVkMiJ9.r5LuaYI8AqH0IxZHyCSD5kb_lXX9FqgBMqfpWdSWN9w\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk5OGRlNDM3LWU2NTgtNGRjNS05Y2M0LTc1MmUyNmQxOGFkMSIsImVtYWlsIjoidmlld0BleGFtcGxlLmNvbSIsInJvbGUiOiJ2aWV3ZXIiLCJzdWIiOiJ2aWV3QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc1NTY1NDgxLCJpYXQiOjE3NzU0NzkwODEsImp0aSI6IjBiZWUyYTk2LTMwNDUtNGY1OC04YWUzLTFmNDZjNjliMTM0NyJ9.UtA4oXKzhsVjgi2kHCLVFZ-Saxaja-8jCsz-EN-3pEE\",\n    \"access_token_expires_at\": \"2026-04-06T20:08:01+05:30\",\n    \"refresh_token_expires_at\": \"2026-04-07T18:08:01+05:30\",\n    \"user\": {\n        \"id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n        \"name\": \"view_user\",\n        \"email\": \"view@example.com\",\n        \"role\": \"viewer\",\n        \"created_at\": \"2026-04-06T17:55:54.624821Z\",\n        \"updated_at\": \"2026-04-06T17:55:54.624821Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n   \"name\": \"new\",\n   \"email\": \"new@example_delete2.com\",\n   \"password\": \"viewer\",\n   \"role\": \"viewer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create User",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n   \"name\": \"view_user_delete_2\",\n   \"email\": \"view@example_delete2.com\",\n   \"password\": \"viewer\",\n   \"role\": \"viewer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:02:24 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "210"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"ddf1a2d1-1077-49c3-a504-d1330c24391b\",\n    \"name\": \"view_user_delete_2\",\n    \"email\": \"view@example_delete2.com\",\n    \"role\": \"viewer\",\n    \"created_at\": \"2026-04-06T18:32:24.418485Z\",\n    \"updated_at\": \"2026-04-06T18:32:24.418485Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Users",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Users",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:29:51 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "962"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n        \"name\": \"view_user\",\n        \"email\": \"view@example.com\",\n        \"role\": \"viewer\",\n        \"created_at\": \"2026-04-06T17:55:54.624821Z\",\n        \"updated_at\": \"2026-04-06T17:55:54.624821Z\"\n    },\n    {\n        \"id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"name\": \"aditya\",\n        \"email\": \"aditya@gmail.com\",\n        \"role\": \"viewer\",\n        \"created_at\": \"2026-04-05T15:10:55.512957Z\",\n        \"updated_at\": \"2026-04-05T15:10:55.512957Z\"\n    },\n    {\n        \"id\": \"57cd3dd2-c975-430d-aa5f-fa3c33cf0826\",\n        \"name\": \"test_analyst\",\n        \"email\": \"xyz@gmail.com\",\n        \"role\": \"analyst\",\n        \"created_at\": \"2026-04-04T20:43:28.297872Z\",\n        \"updated_at\": \"2026-04-04T20:43:28.297872Z\"\n    },\n    {\n        \"id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"name\": \"test_viewer\",\n        \"email\": \"abc@gmail.com\",\n        \"role\": \"viewer\",\n        \"created_at\": \"2026-04-04T20:42:56.528056Z\",\n        \"updated_at\": \"2026-04-04T20:42:56.528056Z\"\n    },\n    {\n        \"id\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"name\": \"admin\",\n        \"email\": \"admin@gmail.com\",\n        \"role\": \"admin\",\n        \"created_at\": \"2026-04-04T20:41:34.445853Z\",\n        \"updated_at\": \"2026-04-04T20:41:34.445853Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/users/e2b08d01-8a47-41d1-9f46-79861873f44c",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "e2b08d01-8a47-41d1-9f46-79861873f44c"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete User",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/users/d6661950-7efb-4d0d-b550-03e5b2d2b9d7",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "d6661950-7efb-4d0d-b550-03e5b2d2b9d7"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:28:03 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "2"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/tokens/revoke",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "tokens",
+                "revoke"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Renew Access Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1ZGE5ZDA4LTc5MzQtNGJkZC1hYjRmLWY4ZWZhYTYyZjhkNCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwic3ViIjoiYWRtaW5AZ21haWwuY29tIiwiZXhwIjoxNzc1NTY1MTI3LCJpYXQiOjE3NzU0Nzg3MjcsImp0aSI6ImYwODdlMWZmLTdmMTYtNGJhYy04MmYxLWRjNTA4ODk2NjAzNyJ9.VG0kAbmlTGTqkVXxTvJa4Rc-21cBOQcbo1bOm3Bcqms\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/tokens/renew",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "tokens",
+                "renew"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Renew Access Token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1ZGE5ZDA4LTc5MzQtNGJkZC1hYjRmLWY4ZWZhYTYyZjhkNCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwic3ViIjoiYWRtaW5AZ21haWwuY29tIiwiZXhwIjoxNzc1NTY1MTI3LCJpYXQiOjE3NzU0Nzg3MjcsImp0aSI6ImYwODdlMWZmLTdmMTYtNGJhYy04MmYxLWRjNTA4ODk2NjAzNyJ9.VG0kAbmlTGTqkVXxTvJa4Rc-21cBOQcbo1bOm3Bcqms\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/tokens/renew",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "tokens",
+                    "renew"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:08:28 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "406"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1ZGE5ZDA4LTc5MzQtNGJkZC1hYjRmLWY4ZWZhYTYyZjhkNCIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwic3ViIjoiYWRtaW5AZ21haWwuY29tIiwiZXhwIjoxNzc1NDgxODA4LCJpYXQiOjE3NzU0ODA5MDgsImp0aSI6Ijc4YmZiMDBiLWYyNjQtNGZkOS05NTI3LWRiZjllNDljZDhhMyJ9.VdqKzjvQ4FJM-dFIdYq_eRfkKGuWYHjSU9Tzt1Oew_o\",\n    \"access_token_expires_at\": \"2026-04-06T18:53:28+05:30\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Deleted Users List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "deleted"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Deleted Users List",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/deleted",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "deleted"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:37:10 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "209"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": \"d6661950-7efb-4d0d-b550-03e5b2d2b9d7\",\n        \"name\": \"view_user_delete\",\n        \"email\": \"view@example_delete.com\",\n        \"role\": \"viewer\",\n        \"created_at\": \"2026-04-06T17:57:17.880471Z\",\n        \"updated_at\": \"2026-04-06T17:57:17.880471Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Hard Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/users/d6661950-7efb-4d0d-b550-03e5b2d2b9d7/h",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "d6661950-7efb-4d0d-b550-03e5b2d2b9d7",
+                "h"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "records",
+      "item": [
+        {
+          "name": "Get Records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/records?type=expense&page=2&limit=3&start_date=2026-04-02T00:00:00Z&end_date=2026-04-02T00:00:00Z",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "expense"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "3"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-04-02T00:00:00Z"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-04-02T00:00:00Z",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "With Query Filter",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/records?type=expense&page=2&limit=3&start_date=2026-04-02T00:00:00Z",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "expense"
+                    },
+                    {
+                      "key": "page",
+                      "value": "2"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "3"
+                    },
+                    {
+                      "key": "category",
+                      "value": "food",
+                      "disabled": true
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2026-04-02T00:00:00Z",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:38:43 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1043"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"page\": 2,\n    \"limit\": 3,\n    \"records\": [\n        {\n            \"id\": \"1b14f726-749c-4a1c-9fa2-259feea21cf0\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1400\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"groceries\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.484084Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.484084Z\"\n        },\n        {\n            \"id\": \"0d725415-0710-44fe-bcb7-814b7cdcf1ac\",\n            \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"450.50\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"Dinner with friends\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T18:06:22.563578Z\",\n            \"updated_at\": \"2026-04-06T18:06:22.563578Z\"\n        },\n        {\n            \"id\": \"796da877-93f0-4b7c-907d-cab13bb60cf9\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1100\",\n            \"type\": \"expense\",\n            \"category\": \"shopping\",\n            \"note\": \"clothes\",\n            \"date\": \"2026-03-20T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.47306Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.47306Z\"\n        }\n    ]\n}"
+            },
+            {
+              "name": "Get Records",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/records",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:00:39 GMT"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"page\": 1,\n    \"limit\": 10,\n    \"records\": [\n        {\n            \"id\": \"abcf5548-2d5c-4116-8b7e-88e852320321\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1250\",\n            \"type\": \"expense\",\n            \"category\": \"entertainment\",\n            \"note\": \"gaming\",\n            \"date\": \"2026-04-04T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.495149Z\",\n            \"updated_at\": \"2026-04-06T11:52:16.987553Z\"\n        },\n        {\n            \"id\": \"6d6a57e3-6a95-4974-8632-c41e974494ef\",\n            \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1000\",\n            \"type\": \"expense\",\n            \"category\": \"transport\",\n            \"note\": \"fuel\",\n            \"date\": \"2026-04-03T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.489482Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.489482Z\"\n        },\n        {\n            \"id\": \"1b14f726-749c-4a1c-9fa2-259feea21cf0\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1400\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"groceries\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.484084Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.484084Z\"\n        },\n        {\n            \"id\": \"0d725415-0710-44fe-bcb7-814b7cdcf1ac\",\n            \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"450.50\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"Dinner with friends\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T18:06:22.563578Z\",\n            \"updated_at\": \"2026-04-06T18:06:22.563578Z\"\n        },\n        {\n            \"id\": \"e84459f7-ae51-4eba-9657-48d4be4f3da4\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1800\",\n            \"type\": \"expense\",\n            \"category\": \"salary\",\n            \"note\": \"Bought new shoes\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-05T15:18:38.099951Z\",\n            \"updated_at\": \"2026-04-05T16:16:49.323229Z\"\n        },\n        {\n            \"id\": \"cb62f7b2-0706-4d73-865c-259067851d38\",\n            \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"54500\",\n            \"type\": \"income\",\n            \"category\": \"salary\",\n            \"note\": \"monthly salary\",\n            \"date\": \"2026-04-01T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.478461Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.478461Z\"\n        },\n        {\n            \"id\": \"796da877-93f0-4b7c-907d-cab13bb60cf9\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1100\",\n            \"type\": \"expense\",\n            \"category\": \"shopping\",\n            \"note\": \"clothes\",\n            \"date\": \"2026-03-20T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.47306Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.47306Z\"\n        },\n        {\n            \"id\": \"04c5c03a-c316-419a-8702-6c4d45a33fbd\",\n            \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"600\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"dinner\",\n            \"date\": \"2026-03-18T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.467636Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.467636Z\"\n        },\n        {\n            \"id\": \"68ff9f1f-146f-4feb-af1e-1d081e042f9f\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"13000\",\n            \"type\": \"income\",\n            \"category\": \"salary\",\n            \"note\": \"part-time\",\n            \"date\": \"2026-03-15T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.462023Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.462023Z\"\n        },\n        {\n            \"id\": \"33e576e0-ae97-4c79-8e2c-05d5767d8b30\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"700\",\n            \"type\": \"expense\",\n            \"category\": \"entertainment\",\n            \"note\": \"movies\",\n            \"date\": \"2026-03-12T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.45075Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.45075Z\"\n        }\n    ]\n}"
+            },
+            {
+              "name": "AllFilters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/records?type=expense&page=2&limit=3&start_date=2026-04-02T00:00:00Z&end_date=2026-04-02T00:00:00Z",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "expense"
+                    },
+                    {
+                      "key": "page",
+                      "value": "2"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "3"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2026-04-02T00:00:00Z"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "2026-04-02T00:00:00Z"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:30:27 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1043"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"page\": 2,\n    \"limit\": 3,\n    \"records\": [\n        {\n            \"id\": \"1b14f726-749c-4a1c-9fa2-259feea21cf0\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1400\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"groceries\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.484084Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.484084Z\"\n        },\n        {\n            \"id\": \"0d725415-0710-44fe-bcb7-814b7cdcf1ac\",\n            \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"450.50\",\n            \"type\": \"expense\",\n            \"category\": \"food\",\n            \"note\": \"Dinner with friends\",\n            \"date\": \"2026-04-02T00:00:00Z\",\n            \"created_at\": \"2026-04-06T18:06:22.563578Z\",\n            \"updated_at\": \"2026-04-06T18:06:22.563578Z\"\n        },\n        {\n            \"id\": \"796da877-93f0-4b7c-907d-cab13bb60cf9\",\n            \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n            \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n            \"amount\": \"1100\",\n            \"type\": \"expense\",\n            \"category\": \"shopping\",\n            \"note\": \"clothes\",\n            \"date\": \"2026-03-20T00:00:00Z\",\n            \"created_at\": \"2026-04-06T00:04:10.47306Z\",\n            \"updated_at\": \"2026-04-06T00:04:10.47306Z\"\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Record By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/records/796da877-93f0-4b7c-907d-cab13bb60cf9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records",
+                "796da877-93f0-4b7c-907d-cab13bb60cf9"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Record By ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/records/796da877-93f0-4b7c-907d-cab13bb60cf9",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records",
+                    "796da877-93f0-4b7c-907d-cab13bb60cf9"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:33:15 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "332"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"796da877-93f0-4b7c-907d-cab13bb60cf9\",\n    \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n    \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n    \"amount\": \"1100\",\n    \"type\": \"expense\",\n    \"category\": \"shopping\",\n    \"note\": \"clothes\",\n    \"date\": \"2026-03-20T00:00:00Z\",\n    \"created_at\": \"2026-04-06T00:04:10.47306Z\",\n    \"updated_at\": \"2026-04-06T00:04:10.47306Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n  \"amount\": \"450.50\",\n  \"type\": \"expense\",\n  \"category\": \"food\",\n  \"note\": \"Dinner with friends\",\n  \"date\": \"2026-04-02T19:15:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/records/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records",
+                ""
+              ]
+            },
+            "description": "## Create Record\n\nCreates a new financial record for a user. This endpoint accepts details such as the amount, type, category, and date of the transaction, and stores it in the system.\n\n---\n\n### Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `POST` |\n| **URL** | `http://localhost:3000/records/` |\n\n---\n\n### Headers\n\n| Key | Value | Description |\n| --- | --- | --- |\n| `Authorization` | `{{access_token}}` | Bearer token used to authenticate the request. The `access_token` variable must be set in your active environment. |\n\n---\n\n### Request Body\n\nSend the request body as **raw JSON** (`application/json`).\n\n``` json\n{\n  \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n  \"amount\": \"450.50\",\n  \"type\": \"expense\",\n  \"category\": \"food\",\n  \"note\": \"Dinner with friends\",\n  \"date\": \"2026-04-02T19:15:00Z\"\n}\n\n ```\n\n#### Body Fields\n\n| Field | Type | Required | Description |\n| --- | --- | --- | --- |\n| `user_id` | `string` (UUID) | Yes | The unique identifier of the user creating the record. |\n| `amount` | `string` (numeric) | Yes | The monetary amount of the transaction (e.g. `\"450.50\"`, `\"2500.00\"`). |\n| `type` | `string` | Yes | The type of financial record (e.g. `\"expense\"`, `\"income\"`). |\n| `category` | `string` | Yes | The category of the record (e.g. `\"food\"`, `\"transport\"`, `\"utilities\"`). |\n| `note` | `string` | No | An optional human-readable note describing the record (e.g. `\"Dinner with friends\"`). |\n| `date` | `string` (ISO 8601) | Yes | The date and time of the transaction in ISO 8601 format (e.g. `\"2026-04-02T19:15:00Z\"`). |\n\n---\n\n### Notes\n\n- The `amount` field is a string representation of a numeric value to preserve decimal precision.\n    \n- The `date` field must follow the ISO 8601 datetime format and should include timezone information (e.g. `Z` for UTC).\n    \n- Ensure the `access_token` environment variable is populated before sending this request. You can use the **Renew Access Token** request to obtain a fresh token."
+          },
+          "response": [
+            {
+              "name": "Create Record",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n  \"amount\": \"450.50\",\n  \"type\": \"expense\",\n  \"category\": \"food\",\n  \"note\": \"Dinner with friends\",\n  \"date\": \"2026-04-02T19:15:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/records/",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:36:22 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "344"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"0d725415-0710-44fe-bcb7-814b7cdcf1ac\",\n    \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n    \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n    \"amount\": \"450.50\",\n    \"type\": \"expense\",\n    \"category\": \"food\",\n    \"note\": \"Dinner with friends\",\n    \"date\": \"2026-04-02T00:00:00Z\",\n    \"created_at\": \"2026-04-06T18:06:22.563578Z\",\n    \"updated_at\": \"2026-04-06T18:06:22.563578Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"2509.00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records",
+                "bbc4beee-468d-4d26-9102-ef1162824701"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Record",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": \"2509.00\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records",
+                    "bbc4beee-468d-4d26-9102-ef1162824701"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:36:08 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "341"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"bbc4beee-468d-4d26-9102-ef1162824701\",\n    \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n    \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n    \"amount\": \"2509.00\",\n    \"type\": \"income\",\n    \"category\": \"salary\",\n    \"note\": \"Monthly stipend\",\n    \"date\": \"2026-03-28T00:00:00Z\",\n    \"created_at\": \"2026-04-06T18:04:54.593444Z\",\n    \"updated_at\": \"2026-04-06T18:06:08.49819Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Record",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records",
+                "bbc4beee-468d-4d26-9102-ef1162824701"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Record",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records",
+                    "bbc4beee-468d-4d26-9102-ef1162824701"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:36:56 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "34"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"successfully deleted\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Deleted Records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/records/deleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "records",
+                "deleted"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Deleted Records",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/records/deleted",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "records",
+                    "deleted"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:42:41 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "343"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": \"bbc4beee-468d-4d26-9102-ef1162824701\",\n        \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"2509.00\",\n        \"type\": \"income\",\n        \"category\": \"salary\",\n        \"note\": \"Monthly stipend\",\n        \"date\": \"2026-03-28T00:00:00Z\",\n        \"created_at\": \"2026-04-06T18:04:54.593444Z\",\n        \"updated_at\": \"2026-04-06T18:06:08.49819Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Hard Delete Record",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701/h",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "records",
+                "bbc4beee-468d-4d26-9102-ef1162824701",
+                "h"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Hard Delete Record",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/records/bbc4beee-468d-4d26-9102-ef1162824701/h",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "records",
+                    "bbc4beee-468d-4d26-9102-ef1162824701",
+                    "h"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:50:02 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "28"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"deleted record\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "dashboard",
+      "item": [
+        {
+          "name": "Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/dashboard/summary?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dashboard",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Summary",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/summary",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "summary"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:49:34 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "52"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"total_income\": \"262000\",\n    \"total_expense\": \"72500.50\"\n}"
+            },
+            {
+              "name": "Summary_Queries",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/summary?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "summary"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:26:46 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "49"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"total_income\": \"224500\",\n    \"total_expense\": \"53300\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Recent",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/dashboard/recent",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dashboard",
+                "recent"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Recent",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/recent",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "recent"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:50:05 GMT"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": \"abcf5548-2d5c-4116-8b7e-88e852320321\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1250\",\n        \"type\": \"expense\",\n        \"category\": \"entertainment\",\n        \"note\": \"gaming\",\n        \"date\": \"2026-04-04T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.495149Z\",\n        \"updated_at\": \"2026-04-06T11:52:16.987553Z\"\n    },\n    {\n        \"id\": \"6d6a57e3-6a95-4974-8632-c41e974494ef\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1000\",\n        \"type\": \"expense\",\n        \"category\": \"transport\",\n        \"note\": \"fuel\",\n        \"date\": \"2026-04-03T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.489482Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.489482Z\"\n    },\n    {\n        \"id\": \"1b14f726-749c-4a1c-9fa2-259feea21cf0\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1400\",\n        \"type\": \"expense\",\n        \"category\": \"food\",\n        \"note\": \"groceries\",\n        \"date\": \"2026-04-02T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.484084Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.484084Z\"\n    },\n    {\n        \"id\": \"0d725415-0710-44fe-bcb7-814b7cdcf1ac\",\n        \"user_id\": \"998de437-e658-4dc5-9cc4-752e26d18ad1\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"450.50\",\n        \"type\": \"expense\",\n        \"category\": \"food\",\n        \"note\": \"Dinner with friends\",\n        \"date\": \"2026-04-02T00:00:00Z\",\n        \"created_at\": \"2026-04-06T18:06:22.563578Z\",\n        \"updated_at\": \"2026-04-06T18:06:22.563578Z\"\n    },\n    {\n        \"id\": \"e84459f7-ae51-4eba-9657-48d4be4f3da4\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1800\",\n        \"type\": \"expense\",\n        \"category\": \"salary\",\n        \"note\": \"Bought new shoes\",\n        \"date\": \"2026-04-02T00:00:00Z\",\n        \"created_at\": \"2026-04-05T15:18:38.099951Z\",\n        \"updated_at\": \"2026-04-05T16:16:49.323229Z\"\n    },\n    {\n        \"id\": \"cb62f7b2-0706-4d73-865c-259067851d38\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"54500\",\n        \"type\": \"income\",\n        \"category\": \"salary\",\n        \"note\": \"monthly salary\",\n        \"date\": \"2026-04-01T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.478461Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.478461Z\"\n    },\n    {\n        \"id\": \"796da877-93f0-4b7c-907d-cab13bb60cf9\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1100\",\n        \"type\": \"expense\",\n        \"category\": \"shopping\",\n        \"note\": \"clothes\",\n        \"date\": \"2026-03-20T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.47306Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.47306Z\"\n    },\n    {\n        \"id\": \"04c5c03a-c316-419a-8702-6c4d45a33fbd\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"600\",\n        \"type\": \"expense\",\n        \"category\": \"food\",\n        \"note\": \"dinner\",\n        \"date\": \"2026-03-18T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.467636Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.467636Z\"\n    },\n    {\n        \"id\": \"68ff9f1f-146f-4feb-af1e-1d081e042f9f\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"13000\",\n        \"type\": \"income\",\n        \"category\": \"salary\",\n        \"note\": \"part-time\",\n        \"date\": \"2026-03-15T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.462023Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.462023Z\"\n    },\n    {\n        \"id\": \"33e576e0-ae97-4c79-8e2c-05d5767d8b30\",\n        \"user_id\": \"39257809-fa9d-485c-b641-c5c3ef29476b\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"700\",\n        \"type\": \"expense\",\n        \"category\": \"entertainment\",\n        \"note\": \"movies\",\n        \"date\": \"2026-03-12T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.45075Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.45075Z\"\n    }\n]"
+            },
+            {
+              "name": "Recent_Queries",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/recent?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "recent"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:27:23 GMT"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": \"6d6a57e3-6a95-4974-8632-c41e974494ef\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"1000\",\n        \"type\": \"expense\",\n        \"category\": \"transport\",\n        \"note\": \"fuel\",\n        \"date\": \"2026-04-03T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.489482Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.489482Z\"\n    },\n    {\n        \"id\": \"cb62f7b2-0706-4d73-865c-259067851d38\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"54500\",\n        \"type\": \"income\",\n        \"category\": \"salary\",\n        \"note\": \"monthly salary\",\n        \"date\": \"2026-04-01T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.478461Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.478461Z\"\n    },\n    {\n        \"id\": \"04c5c03a-c316-419a-8702-6c4d45a33fbd\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"600\",\n        \"type\": \"expense\",\n        \"category\": \"food\",\n        \"note\": \"dinner\",\n        \"date\": \"2026-03-18T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.467636Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.467636Z\"\n    },\n    {\n        \"id\": \"57c65dcc-6628-428a-bcad-934d83dcc905\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"15000\",\n        \"type\": \"expense\",\n        \"category\": \"rent\",\n        \"note\": \"monthly rent\",\n        \"date\": \"2026-03-12T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.456499Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.456499Z\"\n    },\n    {\n        \"id\": \"3206de03-a4ff-4961-9b0b-7d4e73288510\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"3500\",\n        \"type\": \"income\",\n        \"category\": \"freelance\",\n        \"note\": \"website project\",\n        \"date\": \"2026-03-10T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.444935Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.444935Z\"\n    },\n    {\n        \"id\": \"a59f2390-3b0e-47f4-9a33-d6397c43fcad\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"3000\",\n        \"type\": \"expense\",\n        \"category\": \"shopping\",\n        \"note\": \"gadgets\",\n        \"date\": \"2026-03-05T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.43356Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.43356Z\"\n    },\n    {\n        \"id\": \"bd5081e4-fc87-4d2b-8434-5b00391f3442\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"54000\",\n        \"type\": \"income\",\n        \"category\": \"salary\",\n        \"note\": \"monthly salary\",\n        \"date\": \"2026-03-01T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.419426Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.419426Z\"\n    },\n    {\n        \"id\": \"006814a3-f39c-47fd-a6f7-8d3dde95561b\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"400\",\n        \"type\": \"expense\",\n        \"category\": \"food\",\n        \"note\": \"snacks\",\n        \"date\": \"2026-02-18T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.40772Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.40772Z\"\n    },\n    {\n        \"id\": \"b376ab84-3992-4a39-b9a6-4b7e0117e888\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"15000\",\n        \"type\": \"expense\",\n        \"category\": \"rent\",\n        \"note\": \"monthly rent\",\n        \"date\": \"2026-02-12T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.396513Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.396513Z\"\n    },\n    {\n        \"id\": \"849d8440-56e7-48f4-a75a-2a448b46b030\",\n        \"user_id\": \"5249dda0-f6e7-4913-85d1-c6f211f00dd9\",\n        \"created_by\": \"e5da9d08-7934-4bdd-ab4f-f8efaa62f8d4\",\n        \"amount\": \"2500\",\n        \"type\": \"income\",\n        \"category\": \"freelance\",\n        \"note\": \"design work\",\n        \"date\": \"2026-02-09T00:00:00Z\",\n        \"created_at\": \"2026-04-06T00:04:10.385096Z\",\n        \"updated_at\": \"2026-04-06T00:04:10.385096Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/dashboard/trends?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dashboard",
+                "trends"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Trends",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/trends",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "trends"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:06:40 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "206"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"month\": \"2026-04\",\n        \"income\": 54500,\n        \"expense\": 5900.5\n    },\n    {\n        \"month\": \"2026-03\",\n        \"income\": 70500,\n        \"expense\": 22800\n    },\n    {\n        \"month\": \"2026-02\",\n        \"income\": 68000,\n        \"expense\": 21800\n    },\n    {\n        \"month\": \"2026-01\",\n        \"income\": 69000,\n        \"expense\": 22000\n    }\n]"
+            },
+            {
+              "name": "Trends_Queries",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/trends?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "trends"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:27:37 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "204"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"month\": \"2026-04\",\n        \"income\": 54500,\n        \"expense\": 1000\n    },\n    {\n        \"month\": \"2026-03\",\n        \"income\": 57500,\n        \"expense\": 18600\n    },\n    {\n        \"month\": \"2026-02\",\n        \"income\": 55500,\n        \"expense\": 17400\n    },\n    {\n        \"month\": \"2026-01\",\n        \"income\": 57000,\n        \"expense\": 16300\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/dashboard/categories?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "dashboard",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Categories",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/categories",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "categories"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 12:50:57 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "263"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"Category\": \"salary\",\n        \"Total\": 255800\n    },\n    {\n        \"Category\": \"rent\",\n        \"Total\": 45000\n    },\n    {\n        \"Category\": \"shopping\",\n        \"Total\": 10000\n    },\n    {\n        \"Category\": \"food\",\n        \"Total\": 8050.5\n    },\n    {\n        \"Category\": \"freelance\",\n        \"Total\": 8000\n    },\n    {\n        \"Category\": \"transport\",\n        \"Total\": 4500\n    },\n    {\n        \"Category\": \"entertainment\",\n        \"Total\": 3150\n    }\n]"
+            },
+            {
+              "name": "Categories_Queries",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{access_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/dashboard/categories?user_id=5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "dashboard",
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "5249dda0-f6e7-4913-85d1-c6f211f00dd9"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Apr 2026 13:27:54 GMT"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "259"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"Category\": \"salary\",\n        \"Total\": 216500\n    },\n    {\n        \"Category\": \"rent\",\n        \"Total\": 45000\n    },\n    {\n        \"Category\": \"freelance\",\n        \"Total\": 8000\n    },\n    {\n        \"Category\": \"shopping\",\n        \"Total\": 5000\n    },\n    {\n        \"Category\": \"transport\",\n        \"Total\": 1800\n    },\n    {\n        \"Category\": \"food\",\n        \"Total\": 1000\n    },\n    {\n        \"Category\": \"entertainment\",\n        \"Total\": 500\n    }\n]"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "base_url",
+      "value": "https://template.postman-echo.com"
+    }
+  ]
+}
