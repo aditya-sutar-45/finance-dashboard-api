@@ -39,6 +39,12 @@ ORDER BY date DESC;
 SELECT *
 FROM records
 WHERE id = $1
+  AND deleted_at IS NULL;
+
+-- name: GetViewerRecordByID :one
+SELECT * 
+FROM records
+WHERE id = $1
   AND user_id = $2
   AND deleted_at IS NULL;
 

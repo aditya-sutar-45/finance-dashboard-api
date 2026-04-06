@@ -1,0 +1,280 @@
+[
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "55000",
+    "type": "income",
+    "category": "salary",
+    "note": "monthly salary",
+    "date": "2026-01-01T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1200",
+    "type": "expense",
+    "category": "food",
+    "note": "groceries",
+    "date": "2026-01-02T13:20:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "800",
+    "type": "expense",
+    "category": "transport",
+    "note": "fuel",
+    "date": "2026-01-03T10:15:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "3000",
+    "type": "expense",
+    "category": "shopping",
+    "note": "clothes",
+    "date": "2026-01-05T16:45:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "2000",
+    "type": "income",
+    "category": "freelance",
+    "note": "side project",
+    "date": "2026-01-07T11:30:00Z"
+  },
+
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "600",
+    "type": "expense",
+    "category": "food",
+    "note": "dinner",
+    "date": "2026-01-10T20:10:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "15000",
+    "type": "expense",
+    "category": "rent",
+    "note": "monthly rent",
+    "date": "2026-01-12T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "12000",
+    "type": "income",
+    "category": "salary",
+    "note": "part-time job",
+    "date": "2026-01-15T09:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "500",
+    "type": "expense",
+    "category": "entertainment",
+    "note": "movie",
+    "date": "2026-01-18T19:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "900",
+    "type": "expense",
+    "category": "transport",
+    "note": "bus pass",
+    "date": "2026-01-20T08:30:00Z"
+  },
+
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "53000",
+    "type": "income",
+    "category": "salary",
+    "note": "monthly salary",
+    "date": "2026-02-01T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1800",
+    "type": "expense",
+    "category": "food",
+    "note": "groceries",
+    "date": "2026-02-03T12:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "2000",
+    "type": "expense",
+    "category": "shopping",
+    "note": "electronics",
+    "date": "2026-02-05T17:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "700",
+    "type": "expense",
+    "category": "entertainment",
+    "note": "concert",
+    "date": "2026-02-07T19:30:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "2500",
+    "type": "income",
+    "category": "freelance",
+    "note": "design work",
+    "date": "2026-02-09T14:00:00Z"
+  },
+
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1000",
+    "type": "expense",
+    "category": "transport",
+    "note": "fuel",
+    "date": "2026-02-11T10:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "15000",
+    "type": "expense",
+    "category": "rent",
+    "note": "monthly rent",
+    "date": "2026-02-12T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "12500",
+    "type": "income",
+    "category": "salary",
+    "note": "part-time",
+    "date": "2026-02-15T09:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "400",
+    "type": "expense",
+    "category": "food",
+    "note": "snacks",
+    "date": "2026-02-18T18:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "900",
+    "type": "expense",
+    "category": "shopping",
+    "note": "accessories",
+    "date": "2026-02-20T15:30:00Z"
+  },
+
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "54000",
+    "type": "income",
+    "category": "salary",
+    "note": "monthly salary",
+    "date": "2026-03-01T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1600",
+    "type": "expense",
+    "category": "food",
+    "note": "groceries",
+    "date": "2026-03-03T12:30:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "3000",
+    "type": "expense",
+    "category": "shopping",
+    "note": "gadgets",
+    "date": "2026-03-05T16:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "800",
+    "type": "expense",
+    "category": "transport",
+    "note": "cab",
+    "date": "2026-03-07T09:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "3500",
+    "type": "income",
+    "category": "freelance",
+    "note": "website project",
+    "date": "2026-03-10T11:00:00Z"
+  },
+
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "700",
+    "type": "expense",
+    "category": "entertainment",
+    "note": "movies",
+    "date": "2026-03-12T19:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "15000",
+    "type": "expense",
+    "category": "rent",
+    "note": "monthly rent",
+    "date": "2026-03-12T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "13000",
+    "type": "income",
+    "category": "salary",
+    "note": "part-time",
+    "date": "2026-03-15T09:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "600",
+    "type": "expense",
+    "category": "food",
+    "note": "dinner",
+    "date": "2026-03-18T20:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1100",
+    "type": "expense",
+    "category": "shopping",
+    "note": "clothes",
+    "date": "2026-03-20T14:00:00Z"
+  },
+
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "54500",
+    "type": "income",
+    "category": "salary",
+    "note": "monthly salary",
+    "date": "2026-04-01T09:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "1400",
+    "type": "expense",
+    "category": "food",
+    "note": "groceries",
+    "date": "2026-04-02T12:00:00Z"
+  },
+  {
+    "user_id": "5249dda0-f6e7-4913-85d1-c6f211f00dd9",
+    "amount": "1000",
+    "type": "expense",
+    "category": "transport",
+    "note": "fuel",
+    "date": "2026-04-03T10:00:00Z"
+  },
+  {
+    "user_id": "39257809-fa9d-485c-b641-c5c3ef29476b",
+    "amount": "900",
+    "type": "expense",
+    "category": "entertainment",
+    "note": "gaming",
+    "date": "2026-04-04T21:00:00Z"
+  }
+]

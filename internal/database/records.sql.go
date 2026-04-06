@@ -84,17 +84,43 @@ const getRecordByID = `-- name: GetRecordByID :one
 SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
 FROM records
 WHERE id = $1
+  AND deleted_at IS NULL
+`
+
+func (q *Queries) GetRecordByID(ctx context.Context, id uuid.UUID) (Record, error) {
+	row := q.db.QueryRowContext(ctx, getRecordByID, id)
+	var i Record
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Amount,
+		&i.Type,
+		&i.Category,
+		&i.Note,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+	)
+	return i, err
+}
+
+const getViewerRecordByID = `-- name: GetViewerRecordByID :one
+SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by 
+FROM records
+WHERE id = $1
   AND user_id = $2
   AND deleted_at IS NULL
 `
 
-type GetRecordByIDParams struct {
+type GetViewerRecordByIDParams struct {
 	ID     uuid.UUID
 	UserID uuid.UUID
 }
 
-func (q *Queries) GetRecordByID(ctx context.Context, arg GetRecordByIDParams) (Record, error) {
-	row := q.db.QueryRowContext(ctx, getRecordByID, arg.ID, arg.UserID)
+func (q *Queries) GetViewerRecordByID(ctx context.Context, arg GetViewerRecordByIDParams) (Record, error) {
+	row := q.db.QueryRowContext(ctx, getViewerRecordByID, arg.ID, arg.UserID)
 	var i Record
 	err := row.Scan(
 		&i.ID,

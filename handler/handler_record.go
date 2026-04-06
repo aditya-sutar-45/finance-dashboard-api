@@ -3,86 +3,45 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/aditya-sutar-45/finance-dashboard-api/internal/database"
 	"github.com/aditya-sutar-45/finance-dashboard-api/models"
 	"github.com/aditya-sutar-45/finance-dashboard-api/utils"
+	"github.com/aditya-sutar-45/finance-dashboard-api/validators"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
 func (h *Handler) CreateRecord(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		UserID   string    `json:"user_id"`
-		Amount   string    `json:"amount"`
-		Type     string    `json:"type"`
-		Category string    `json:"category"`
-		Note     string    `json:"note"`
-		Date     time.Time `json:"date"`
-	}
-
-	var params parameters
+	var params models.CreateRecordParameters
 
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "error decoding json")
 		return
 	}
+	if err := validators.ValidateCreateRecord(&params, h.DB, r.Context()); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("validation error: %v", err))
+		return
+	}
 
 	uID, err := uuid.Parse(params.UserID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("invalid user id:  %v", err))
+		utils.RespondWithError(w, http.StatusBadRequest, "error decoding json")
 		return
 	}
 	// check if user exists in the database
 	_, err = h.DB.GetUserByID(r.Context(), uID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusNotFound, "user not found")
+		utils.RespondWithError(w, http.StatusBadRequest, "error decoding json")
 		return
 	}
-
-	// Amount validation
-	if params.Amount == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "amount is required")
-		return
-	}
-
-	amountFloat, err := strconv.ParseFloat(params.Amount, 64)
-	if err != nil || amountFloat <= 0 {
-		utils.RespondWithError(w, http.StatusBadRequest, "amount must be a valid positive number")
-		return
-	}
-
-	// Type validation
-	if params.Type != "income" && params.Type != "expense" {
-		utils.RespondWithError(w, http.StatusBadRequest, "type must be 'income' or 'expense'")
-		return
-	}
-
-	// Category validation
-	if strings.TrimSpace(params.Category) == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "category is required")
-		return
-	}
-
-	// Date validation
-	if params.Date.IsZero() {
-		utils.RespondWithError(w, http.StatusBadRequest, "date is required")
-		return
-	}
-
-	if params.Date.After(time.Now()) {
-		utils.RespondWithError(w, http.StatusBadRequest, "date cannot be in the future")
-		return
-	}
-
-	note := strings.TrimSpace(params.Note)
 
 	createdByID, _, err := getUserIDFromClaims(r)
 	if err != nil {
@@ -101,8 +60,8 @@ func (h *Handler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 		Amount:   params.Amount,
 		Type:     params.Type,
 		Note: sql.NullString{
-			String: note,
-			Valid:  note != "",
+			String: params.Note,
+			Valid:  params.Note != "",
 		},
 		Date: params.Date,
 	})
@@ -130,20 +89,9 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 	var startDate time.Time
 	var endDate time.Time
 
-	if startDateParam != "" {
-		startDate, err = time.Parse("2006-01-02", startDateParam)
-		if err != nil {
-			utils.RespondWithError(w, http.StatusBadRequest, "invalid start_date format (YYYY-MM-DD)")
-			return
-		}
-	}
-
-	if endDateParam != "" {
-		endDate, err = time.Parse("2006-01-02", endDateParam)
-		if err != nil {
-			utils.RespondWithError(w, http.StatusBadRequest, "invalid end_date format (YYYY-MM-DD)")
-			return
-		}
+	if err := validators.ValidateGetRecords(typeParam, categoryParam, startDate, endDate, startDateParam, endDateParam); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error validating query params: %v", err))
+		return
 	}
 
 	switch uRole {
@@ -237,17 +185,56 @@ func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, query ur
 }
 
 func (h *Handler) GetRecordByID(w http.ResponseWriter, r *http.Request) {
+	idString := chi.URLParam(r, "id")
+	recordID, err := uuid.Parse(idString)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "invalid record id")
+		return
+	}
+
+	userID, userRole, err := getUserIDFromClaims(r)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusUnauthorized, "no claims found")
+		return
+	}
+
+	switch userRole {
+	case "admin", "analyst":
+		record, err := h.DB.GetRecordByID(r.Context(), recordID)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				utils.RespondWithError(w, http.StatusNotFound, "record not found")
+				return
+			}
+			utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch record")
+			return
+		}
+
+		utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
+	case "viewer":
+		record, err := h.DB.GetViewerRecordByID(r.Context(), database.GetViewerRecordByIDParams{
+			ID:     recordID,
+			UserID: userID,
+		})
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				utils.RespondWithError(w, http.StatusNotFound, "record not found")
+				return
+			}
+			utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch record")
+			return
+		}
+
+		utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
+	default:
+		utils.RespondWithError(w, http.StatusForbidden, "invalid role")
+		return
+	}
 }
 
 func (h *Handler) UpdateRecordByID(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Amount   *string    `json:"amount"`
-		Type     *string    `json:"type"`
-		Category *string    `json:"category"`
-		Note     *string    `json:"note"`
-		Date     *time.Time `json:"date"`
-	}
-	var params parameters
+	var params models.UpdateRecordParameters
+
 	idString := chi.URLParam(r, "id")
 	recordID, err := uuid.Parse(idString)
 	if err != nil {
@@ -257,6 +244,11 @@ func (h *Handler) UpdateRecordByID(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	if err := validators.ValidatgeUpdateRecord(params); err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error validating body: %v", err))
 		return
 	}
 
@@ -301,6 +293,10 @@ func (h *Handler) DeleteRecordByID(w http.ResponseWriter, r *http.Request) {
 
 	err = h.DB.DeleteRecordByID(r.Context(), recordID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.RespondWithError(w, http.StatusNotFound, "record not found")
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, "error deleting record")
 		return
 	}

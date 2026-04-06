@@ -20,6 +20,23 @@ type Record struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type CreateRecordParameters struct {
+	UserID   string    `json:"user_id"`
+	Amount   string    `json:"amount"`
+	Type     string    `json:"type"`
+	Category string    `json:"category"`
+	Note     string    `json:"note"`
+	Date     time.Time `json:"date"`
+}
+
+type UpdateRecordParameters struct {
+	Amount   *string    `json:"amount"`
+	Type     *string    `json:"type"`
+	Category *string    `json:"category"`
+	Note     *string    `json:"note"`
+	Date     *time.Time `json:"date"`
+}
+
 func DatabaseRecordToRecord(dbRecord database.Record) Record {
 	var createdAt time.Time
 	var updatedAt time.Time
