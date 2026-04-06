@@ -258,3 +258,13 @@ func (h *Handler) DeleteRecordByID(w http.ResponseWriter, r *http.Request) {
 		Message: "successfully deleted",
 	})
 }
+
+func (h *Handler) GetDeletedRecords(w http.ResponseWriter, r *http.Request) {
+	records, err := h.DB.GetDeletedRecords(r.Context())
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error fetching from db:\n %v", err))
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordsToRecords(records))
+}

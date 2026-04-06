@@ -80,6 +80,46 @@ func (q *Queries) DeleteRecordByID(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getDeletedRecords = `-- name: GetDeletedRecords :many
+SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by FROM records
+WHERE deleted_at IS NOT NULL
+`
+
+func (q *Queries) GetDeletedRecords(ctx context.Context) ([]Record, error) {
+	rows, err := q.db.QueryContext(ctx, getDeletedRecords)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Record
+	for rows.Next() {
+		var i Record
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Amount,
+			&i.Type,
+			&i.Category,
+			&i.Note,
+			&i.Date,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.CreatedBy,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getRecordByID = `-- name: GetRecordByID :one
 SELECT id, user_id, amount, type, category, note, date, created_at, updated_at, deleted_at, created_by
 FROM records
