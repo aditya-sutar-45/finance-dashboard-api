@@ -52,6 +52,7 @@ func loadRecordRoutes(router chi.Router, h *handler.Handler) {
 	router.With(handler.RequireRole(token.RoleAdmin)).Patch("/{id}", h.UpdateRecordByID)
 	router.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}", h.DeleteRecordByID)
 	router.With(handler.RequireRole(token.RoleAdmin)).Get("/deleted", h.GetDeletedRecords)
+	router.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}/h", h.HardDeleteRecordByID)
 }
 
 func loadAuthRoutes(router chi.Router, h *handler.Handler) {
@@ -73,6 +74,7 @@ func loadAuthRoutes(router chi.Router, h *handler.Handler) {
 		r.With(handler.RequireRole(token.RoleAdmin)).Post("/", h.CreateUser)
 		r.With(handler.RequireRole(token.RoleAdmin)).Get("/", h.ListUsers)
 		r.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}", h.DeleteUser)
+		r.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}/h", h.HardDeleteUser)
 	})
 }
 

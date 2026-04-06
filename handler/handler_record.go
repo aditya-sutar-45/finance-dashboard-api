@@ -268,3 +268,30 @@ func (h *Handler) GetDeletedRecords(w http.ResponseWriter, r *http.Request) {
 
 	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordsToRecords(records))
 }
+
+func (h *Handler) HardDeleteRecordByID(w http.ResponseWriter, r *http.Request) {
+	idString := chi.URLParam(r, "id")
+	recordID, err := uuid.Parse(idString)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "invalid record id")
+		return
+	}
+
+	err = h.DB.HardDeleteRecordByID(r.Context(), recordID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.RespondWithError(w, http.StatusNotFound, "record not found")
+			return
+		}
+		utils.RespondWithError(w, http.StatusInternalServerError, "error deleting record")
+		return
+	}
+
+	type res struct {
+		Message string `json:"message"`
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, res{
+		Message: "deleted record",
+	})
+}

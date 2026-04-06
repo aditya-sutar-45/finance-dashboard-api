@@ -180,16 +180,11 @@ func (q *Queries) GetViewerRecordByID(ctx context.Context, arg GetViewerRecordBy
 
 const hardDeleteRecordByID = `-- name: HardDeleteRecordByID :exec
 DELETE FROM records
-WHERE id = $1 AND user_id = $2
+WHERE id = $1
 `
 
-type HardDeleteRecordByIDParams struct {
-	ID     uuid.UUID
-	UserID uuid.UUID
-}
-
-func (q *Queries) HardDeleteRecordByID(ctx context.Context, arg HardDeleteRecordByIDParams) error {
-	_, err := q.db.ExecContext(ctx, hardDeleteRecordByID, arg.ID, arg.UserID)
+func (q *Queries) HardDeleteRecordByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, hardDeleteRecordByID, id)
 	return err
 }
 

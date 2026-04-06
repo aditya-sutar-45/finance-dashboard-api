@@ -85,7 +85,7 @@ WHERE id = $1
 
 -- name: HardDeleteRecordByID :exec
 DELETE FROM records
-WHERE id = $1 AND user_id = $2;
+WHERE id = $1;
 
 -- name: GetDeletedRecords :many
 SELECT * FROM records

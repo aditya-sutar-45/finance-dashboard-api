@@ -115,6 +115,29 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, struct{}{})
 }
 
+func (h *Handler) HardDeleteUser(w http.ResponseWriter, r *http.Request) {
+	idString := chi.URLParam(r, "id")
+
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error parsing uuid: %v", err))
+		return
+	}
+
+	err = h.DB.HardDeleteUser(r.Context(), id)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error deleting user from db: %v", err))
+		return
+	}
+
+	type response struct {
+		Message string `json:"message"`
+	}
+	utils.RespondWithJSON(w, http.StatusOK, response{
+		Message: "deleted user",
+	})
+}
+
 func (h *Handler) GetDeletedUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.DB.GetDeletedUsers(r.Context())
 	if err != nil {
