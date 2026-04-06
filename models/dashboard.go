@@ -18,7 +18,7 @@ func DatabaseSummaryToDashboardSummary(dbSummary database.GetDashboardSummaryRow
 
 type CategoryAnalysisRow struct {
 	Category string
-	Total    int64
+	Total    float64
 }
 
 func DatabaseCategoryAnalysisToCategoryAnalysis(dbCategory database.GetCategoryAnalysisRow) CategoryAnalysisRow {
@@ -38,9 +38,9 @@ func DatabaseCategoryAnalysisToCategoryAnalysisRows(dbCategory []database.GetCat
 }
 
 type TrendsRow struct {
-	Month   string `json:"month"`
-	Income  int64  `json:"income"`
-	Expense int64  `json:"expense"`
+	Month   string  `json:"month"`
+	Income  float64 `json:"income"`
+	Expense float64 `json:"expense"`
 }
 
 func DatabaseTrendsRowToTrendsRow(dbRow database.GetTrendsRow) TrendsRow {

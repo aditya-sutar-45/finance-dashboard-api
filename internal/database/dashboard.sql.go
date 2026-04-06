@@ -14,7 +14,7 @@ import (
 const getCategoryAnalysis = `-- name: GetCategoryAnalysis :many
 SELECT
   category,
-  SUM(amount) AS total
+  SUM(amount)::FLOAT AS total
 FROM records
 WHERE deleted_at IS NULL
   AND ($1::UUID IS NULL OR user_id = $1::UUID)
@@ -24,7 +24,7 @@ ORDER BY total DESC
 
 type GetCategoryAnalysisRow struct {
 	Category string
-	Total    int64
+	Total    float64
 }
 
 func (q *Queries) GetCategoryAnalysis(ctx context.Context, userID uuid.NullUUID) ([]GetCategoryAnalysisRow, error) {
@@ -118,8 +118,8 @@ func (q *Queries) GetRecent(ctx context.Context, userID uuid.NullUUID) ([]Record
 const getTrends = `-- name: GetTrends :many
 SELECT
   TO_CHAR(date, 'YYYY-MM') AS month,
-  SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS income,
-  SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS expense
+  SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END)::FLOAT AS income,
+  SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END)::FLOAT AS expense
 FROM records
 WHERE deleted_at IS NULL
   AND ($1::UUID IS NULL OR user_id = $1::UUID)
@@ -129,8 +129,8 @@ ORDER BY month DESC
 
 type GetTrendsRow struct {
 	Month   string
-	Income  int64
-	Expense int64
+	Income  float64
+	Expense float64
 }
 
 func (q *Queries) GetTrends(ctx context.Context, userID uuid.NullUUID) ([]GetTrendsRow, error) {

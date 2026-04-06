@@ -129,7 +129,7 @@ func (h *Handler) GetTrends(w http.ResponseWriter, r *http.Request) {
 
 	data, err := h.DB.GetTrends(r.Context(), uID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch summary")
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("failed to fetch trends:\n %v", err))
 		return
 	}
 

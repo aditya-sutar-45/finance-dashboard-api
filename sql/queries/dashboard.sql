@@ -9,7 +9,7 @@ WHERE deleted_at IS NULL
 -- name: GetCategoryAnalysis :many
 SELECT
   category,
-  SUM(amount) AS total
+  SUM(amount)::FLOAT AS total
 FROM records
 WHERE deleted_at IS NULL
   AND (sqlc.narg(user_id)::UUID IS NULL OR user_id = sqlc.narg(user_id)::UUID)
@@ -19,8 +19,8 @@ ORDER BY total DESC;
 -- name: GetTrends :many
 SELECT
   TO_CHAR(date, 'YYYY-MM') AS month,
-  SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS income,
-  SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS expense
+  SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END)::FLOAT AS income,
+  SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END)::FLOAT AS expense
 FROM records
 WHERE deleted_at IS NULL
   AND (sqlc.narg(user_id)::UUID IS NULL OR user_id = sqlc.narg(user_id)::UUID)
