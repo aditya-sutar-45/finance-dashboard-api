@@ -38,14 +38,14 @@ func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create token
-	accessToken, accessClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 2*time.Hour)
+	accessToken, accessClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, token.Role(user.Role), 2*time.Hour)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating the token: %v", err))
 		return
 	}
 
 	// refresh token
-	refreshToken, refreshClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, user.Role, 24*time.Hour)
+	refreshToken, refreshClaims, err := h.TokenMaker.CreateToken(user.ID, user.Email, token.Role(user.Role), 24*time.Hour)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating the token: %v", err))
 		return

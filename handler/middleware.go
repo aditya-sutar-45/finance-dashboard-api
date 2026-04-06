@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"slices"
 	"strings"
 
 	"github.com/aditya-sutar-45/finance-dashboard-api/token"
@@ -30,7 +29,7 @@ func GetAuthMiddlwareFunc(tokenMaker *token.JWTMaker) func(http.Handler) http.Ha
 	}
 }
 
-func RequireRole(roles ...string) func(http.Handler) http.Handler {
+func RequireRole(roles ...token.Role) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userClaims, ok := r.Context().Value(authKey{}).(*token.UserClaims)
@@ -39,9 +38,22 @@ func RequireRole(roles ...string) func(http.Handler) http.Handler {
 				return
 			}
 
-			if slices.Contains(roles, userClaims.Role) {
-				next.ServeHTTP(w, r)
+			userLevel, ok := token.RoleHierarchy[userClaims.Role]
+			if !ok {
+				utils.RespondWithError(w, http.StatusForbidden, "invalid role")
 				return
+			}
+
+			for _, role := range roles {
+				requiredLevel, ok := token.RoleHierarchy[role]
+				if !ok {
+					continue
+				}
+
+				if userLevel >= requiredLevel {
+					next.ServeHTTP(w, r)
+					return
+				}
 			}
 
 			utils.RespondWithError(w, http.StatusForbidden, "forbidden")

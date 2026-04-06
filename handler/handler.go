@@ -22,7 +22,7 @@ func NewHandler(db *database.Queries, secretKey string) *Handler {
 	}
 }
 
-func getUserIDFromClaims(r *http.Request) (uuid.UUID, string, error) {
+func getUserIDFromClaims(r *http.Request) (uuid.UUID, token.Role, error) {
 	claims := r.Context().Value(authKey{}).(*token.UserClaims)
 	if claims == nil {
 		return uuid.Nil, "", fmt.Errorf("claims not found in context")

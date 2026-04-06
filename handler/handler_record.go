@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -75,12 +74,6 @@ func (h *Handler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
-	uID, uRole, err := getUserIDFromClaims(r)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error getting user id: %v", err))
-		return
-	}
-
 	query := r.URL.Query()
 	pageStr := query.Get("page")
 	limitStr := query.Get("limit")
@@ -88,9 +81,11 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 	categoryParam := strings.TrimSpace(query.Get("category"))
 	startDateParam := query.Get("start_date")
 	endDateParam := query.Get("end_date")
+	filterUserIDString := strings.TrimSpace(query.Get("user_id"))
 
 	var startDate time.Time
 	var endDate time.Time
+	var filterUserID uuid.UUID
 
 	if err := validators.ValidateGetRecords(typeParam, categoryParam, startDate, endDate, startDateParam, endDateParam); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error validating query params: %v", err))
@@ -108,52 +103,6 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := (page - 1) * limit
-
-	switch uRole {
-	case "analyst", "admin":
-		h.getAllRecords(w, r, int32(page), int32(limit), int32(offset), query, typeParam, categoryParam, startDate, endDate)
-	case "viewer":
-		h.getUserRecords(w, r, int32(page), int32(limit), int32(offset), uID, typeParam, categoryParam, startDate, endDate)
-	}
-}
-
-func (h *Handler) getUserRecords(w http.ResponseWriter, r *http.Request, page int32, limit int32, offset int32, userID uuid.UUID, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
-	records, err := h.DB.ListRecords(r.Context(), database.ListRecordsParams{
-		UserID: userID,
-		Type: sql.NullString{
-			String: typeParam,
-			Valid:  typeParam != "",
-		},
-		Category: sql.NullString{
-			String: categoryParam,
-			Valid:  categoryParam != "",
-		},
-		StartDate: sql.NullTime{
-			Time:  startDate,
-			Valid: !startDate.IsZero(),
-		},
-		EndDate: sql.NullTime{
-			Time:  endDate,
-			Valid: !endDate.IsZero(),
-		},
-		PageOffset: offset,
-		PageLimit:  limit,
-	})
-	if err != nil {
-		utils.RespondWithError(w, http.StatusNotFound, "could not fetch records from the database")
-		return
-	}
-
-	utils.RespondWithJSON(w, http.StatusOK, models.GetRecordsResponse{
-		Page:    page,
-		Limit:   limit,
-		Records: models.DatabaseRecordsToRecords(records),
-	})
-}
-
-func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, page int32, limit int32, offset int32, query url.Values, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
-	var filterUserID uuid.UUID
-	filterUserIDString := strings.TrimSpace(query.Get("user_id"))
 
 	if filterUserIDString != "" {
 		// check uuid
@@ -196,8 +145,8 @@ func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, page int
 			Time:  endDate,
 			Valid: !endDate.IsZero(),
 		},
-		PageLimit:  limit,
-		PageOffset: offset,
+		PageLimit:  int32(limit),
+		PageOffset: int32(offset),
 	})
 	if err != nil {
 		utils.RespondWithError(w, http.StatusNotFound, fmt.Sprintf("error fetching records from database: %v", err))
@@ -205,8 +154,8 @@ func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, page int
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, models.GetRecordsResponse{
-		Page:    page,
-		Limit:   limit,
+		Page:    int32(page),
+		Limit:   int32(limit),
 		Records: models.DatabaseRecordsToRecords(records),
 	})
 }
@@ -219,44 +168,17 @@ func (h *Handler) GetRecordByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, userRole, err := getUserIDFromClaims(r)
+	record, err := h.DB.GetRecordByID(r.Context(), recordID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusUnauthorized, "no claims found")
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.RespondWithError(w, http.StatusNotFound, "record not found")
+			return
+		}
+		utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch record")
 		return
 	}
 
-	switch userRole {
-	case "admin", "analyst":
-		record, err := h.DB.GetRecordByID(r.Context(), recordID)
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				utils.RespondWithError(w, http.StatusNotFound, "record not found")
-				return
-			}
-			utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch record")
-			return
-		}
-
-		utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
-	case "viewer":
-		record, err := h.DB.GetViewerRecordByID(r.Context(), database.GetViewerRecordByIDParams{
-			ID:     recordID,
-			UserID: userID,
-		})
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				utils.RespondWithError(w, http.StatusNotFound, "record not found")
-				return
-			}
-			utils.RespondWithError(w, http.StatusInternalServerError, "failed to fetch record")
-			return
-		}
-
-		utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
-	default:
-		utils.RespondWithError(w, http.StatusForbidden, "invalid role")
-		return
-	}
+	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordToRecord(record))
 }
 
 func (h *Handler) UpdateRecordByID(w http.ResponseWriter, r *http.Request) {

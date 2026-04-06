@@ -5,6 +5,7 @@ import (
 
 	"github.com/aditya-sutar-45/finance-dashboard-api/handler"
 	"github.com/aditya-sutar-45/finance-dashboard-api/internal/database"
+	"github.com/aditya-sutar-45/finance-dashboard-api/token"
 	"github.com/aditya-sutar-45/finance-dashboard-api/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -32,6 +33,10 @@ func loadRoutes(db *database.Queries, secretKey string) *chi.Mux {
 		loadAuthRoutes(r, h)
 	})
 
+	router.Route("/dashboard", func(r chi.Router) {
+		loadDashboardRoutes(r, h)
+	})
+
 	return router
 }
 
@@ -40,17 +45,16 @@ func loadRecordRoutes(router chi.Router, h *handler.Handler) {
 
 	router.Use(handler.GetAuthMiddlwareFunc(tokenMaker))
 
-	router.Get("/{id}", h.GetRecordByID)
-	router.Get("/", h.GetRecords)
+	router.With(handler.RequireRole(token.RoleAnalyst)).Get("/{id}", h.GetRecordByID)
+	router.With(handler.RequireRole(token.RoleAnalyst)).Get("/", h.GetRecords)
 
-	router.With(handler.RequireRole("admin")).Post("/", h.CreateRecord)
-	router.With(handler.RequireRole("admin")).Patch("/{id}", h.UpdateRecordByID)
-	router.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteRecordByID)
+	router.With(handler.RequireRole(token.RoleAdmin)).Post("/", h.CreateRecord)
+	router.With(handler.RequireRole(token.RoleAdmin)).Patch("/{id}", h.UpdateRecordByID)
+	router.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}", h.DeleteRecordByID)
 }
 
 func loadAuthRoutes(router chi.Router, h *handler.Handler) {
 	// Public
-	router.Post("/", h.CreateUser)
 	router.Post("/login", h.LoginUser)
 
 	//  Refresh token endpoint
@@ -64,7 +68,18 @@ func loadAuthRoutes(router chi.Router, h *handler.Handler) {
 
 		r.Post("/tokens/revoke", h.RevokeSession)
 
-		r.With(handler.RequireRole("admin")).Get("/", h.ListUsers)
-		r.With(handler.RequireRole("admin")).Delete("/{id}", h.DeleteUser)
+		router.With(handler.RequireRole(token.RoleAdmin)).Post("/", h.CreateUser)
+		r.With(handler.RequireRole(token.RoleAdmin)).Get("/", h.ListUsers)
+		r.With(handler.RequireRole(token.RoleAdmin)).Delete("/{id}", h.DeleteUser)
 	})
+}
+
+func loadDashboardRoutes(router chi.Router, h *handler.Handler) {
+	tokenMaker := h.TokenMaker
+	router.Use(handler.GetAuthMiddlwareFunc(tokenMaker))
+
+	router.Get("/summary", h.GetDashboardSummary)
+	router.Get("/categories", h.GetCategoryAnalysis)
+	router.Get("/trends", h.GetTrends)
+	router.Get("/recent", h.GetRecent)
 }
