@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -81,6 +82,8 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query()
+	pageStr := query.Get("page")
+	limitStr := query.Get("limit")
 	typeParam := strings.TrimSpace(query.Get("type"))
 	categoryParam := strings.TrimSpace(query.Get("category"))
 	startDateParam := query.Get("start_date")
@@ -94,15 +97,27 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	page := 1
+	limit := 10
+
+	if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+		page = p
+	}
+	if l, err := strconv.Atoi(limitStr); err == nil && l > 0 {
+		limit = l
+	}
+
+	offset := (page - 1) * limit
+
 	switch uRole {
 	case "analyst", "admin":
-		h.getAllRecords(w, r, query, typeParam, categoryParam, startDate, endDate)
+		h.getAllRecords(w, r, int32(page), int32(limit), int32(offset), query, typeParam, categoryParam, startDate, endDate)
 	case "viewer":
-		h.getUserRecords(w, r, uID, typeParam, categoryParam, startDate, endDate)
+		h.getUserRecords(w, r, int32(page), int32(limit), int32(offset), uID, typeParam, categoryParam, startDate, endDate)
 	}
 }
 
-func (h *Handler) getUserRecords(w http.ResponseWriter, r *http.Request, userID uuid.UUID, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
+func (h *Handler) getUserRecords(w http.ResponseWriter, r *http.Request, page int32, limit int32, offset int32, userID uuid.UUID, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
 	records, err := h.DB.ListRecords(r.Context(), database.ListRecordsParams{
 		UserID: userID,
 		Type: sql.NullString{
@@ -121,16 +136,22 @@ func (h *Handler) getUserRecords(w http.ResponseWriter, r *http.Request, userID 
 			Time:  endDate,
 			Valid: !endDate.IsZero(),
 		},
+		PageOffset: offset,
+		PageLimit:  limit,
 	})
 	if err != nil {
 		utils.RespondWithError(w, http.StatusNotFound, "could not fetch records from the database")
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordsToRecords(records))
+	utils.RespondWithJSON(w, http.StatusOK, models.GetRecordsResponse{
+		Page:    page,
+		Limit:   limit,
+		Records: models.DatabaseRecordsToRecords(records),
+	})
 }
 
-func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, query url.Values, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
+func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, page int32, limit int32, offset int32, query url.Values, typeParam string, categoryParam string, startDate time.Time, endDate time.Time) {
 	var filterUserID uuid.UUID
 	filterUserIDString := strings.TrimSpace(query.Get("user_id"))
 
@@ -175,13 +196,19 @@ func (h *Handler) getAllRecords(w http.ResponseWriter, r *http.Request, query ur
 			Time:  endDate,
 			Valid: !endDate.IsZero(),
 		},
+		PageLimit:  limit,
+		PageOffset: offset,
 	})
 	if err != nil {
 		utils.RespondWithError(w, http.StatusNotFound, fmt.Sprintf("error fetching records from database: %v", err))
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseRecordsToRecords(records))
+	utils.RespondWithJSON(w, http.StatusOK, models.GetRecordsResponse{
+		Page:    page,
+		Limit:   limit,
+		Records: models.DatabaseRecordsToRecords(records),
+	})
 }
 
 func (h *Handler) GetRecordByID(w http.ResponseWriter, r *http.Request) {

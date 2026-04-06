@@ -22,7 +22,8 @@ WHERE user_id = sqlc.arg(user_id)
   AND (sqlc.narg(start_date)::DATE IS NULL OR date >= sqlc.narg(start_date)::DATE)
   AND (sqlc.narg(end_date)::DATE IS NULL OR date <= sqlc.narg(end_date)::DATE)
   AND deleted_at IS NULL
-ORDER BY date DESC;
+ORDER BY date DESC
+LIMIT sqlc.arg(page_limit) OFFSET sqlc.arg(page_offset);
 
 -- name: ListAllRecords :many
 SELECT *
@@ -33,7 +34,8 @@ WHERE (sqlc.narg('user_id')::UUID IS NULL OR user_id = sqlc.narg('user_id')::UUI
   AND (sqlc.narg('start_date')::DATE IS NULL OR date >= sqlc.narg('start_date')::DATE)
   AND (sqlc.narg('end_date')::DATE IS NULL OR date <= sqlc.narg('end_date')::DATE)
   AND deleted_at IS NULL
-ORDER BY date DESC;
+ORDER BY date DESC
+LIMIT sqlc.arg(page_limit) OFFSET sqlc.arg(page_offset);
 
 -- name: GetRecordByID :one
 SELECT *

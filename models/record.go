@@ -20,6 +20,12 @@ type Record struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type GetRecordsResponse struct {
+	Page    int32    `json:"page"`
+	Limit   int32    `json:"limit"`
+	Records []Record `json:"records"`
+}
+
 type CreateRecordParameters struct {
 	UserID   string    `json:"user_id"`
 	Amount   string    `json:"amount"`

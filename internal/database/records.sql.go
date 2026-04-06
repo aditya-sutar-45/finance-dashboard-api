@@ -163,14 +163,17 @@ WHERE ($1::UUID IS NULL OR user_id = $1::UUID)
   AND ($5::DATE IS NULL OR date <= $5::DATE)
   AND deleted_at IS NULL
 ORDER BY date DESC
+LIMIT $7 OFFSET $6
 `
 
 type ListAllRecordsParams struct {
-	UserID    uuid.NullUUID
-	Type      sql.NullString
-	Category  sql.NullString
-	StartDate sql.NullTime
-	EndDate   sql.NullTime
+	UserID     uuid.NullUUID
+	Type       sql.NullString
+	Category   sql.NullString
+	StartDate  sql.NullTime
+	EndDate    sql.NullTime
+	PageOffset int32
+	PageLimit  int32
 }
 
 func (q *Queries) ListAllRecords(ctx context.Context, arg ListAllRecordsParams) ([]Record, error) {
@@ -180,6 +183,8 @@ func (q *Queries) ListAllRecords(ctx context.Context, arg ListAllRecordsParams) 
 		arg.Category,
 		arg.StartDate,
 		arg.EndDate,
+		arg.PageOffset,
+		arg.PageLimit,
 	)
 	if err != nil {
 		return nil, err
@@ -224,14 +229,17 @@ WHERE user_id = $1
   AND ($5::DATE IS NULL OR date <= $5::DATE)
   AND deleted_at IS NULL
 ORDER BY date DESC
+LIMIT $7 OFFSET $6
 `
 
 type ListRecordsParams struct {
-	UserID    uuid.UUID
-	Type      sql.NullString
-	Category  sql.NullString
-	StartDate sql.NullTime
-	EndDate   sql.NullTime
+	UserID     uuid.UUID
+	Type       sql.NullString
+	Category   sql.NullString
+	StartDate  sql.NullTime
+	EndDate    sql.NullTime
+	PageOffset int32
+	PageLimit  int32
 }
 
 func (q *Queries) ListRecords(ctx context.Context, arg ListRecordsParams) ([]Record, error) {
@@ -241,6 +249,8 @@ func (q *Queries) ListRecords(ctx context.Context, arg ListRecordsParams) ([]Rec
 		arg.Category,
 		arg.StartDate,
 		arg.EndDate,
+		arg.PageOffset,
+		arg.PageLimit,
 	)
 	if err != nil {
 		return nil, err
