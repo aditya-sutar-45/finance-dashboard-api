@@ -114,3 +114,13 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.RespondWithJSON(w, http.StatusOK, struct{}{})
 }
+
+func (h *Handler) GetDeletedUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.DB.GetDeletedUsers(r.Context())
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error fetching users from DB:\n %v", err))
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, models.DatabaseUsersToUsers(users))
+}

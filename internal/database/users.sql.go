@@ -65,6 +65,43 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getDeletedUsers = `-- name: GetDeletedUsers :many
+SELECT id, name, email, password_hash, role, created_at, updated_at, deleted_at FROM users
+WHERE deleted_at IS NOT NULL
+`
+
+func (q *Queries) GetDeletedUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getDeletedUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.PasswordHash,
+			&i.Role,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
 SELECT id, name, email, password_hash, role, created_at, updated_at, deleted_at
 FROM users

@@ -42,3 +42,6 @@ SELECT *
 FROM users
 WHERE id = $1 AND deleted_at IS NULL;
 
+-- name: GetDeletedUsers :many
+SELECT * FROM users
+WHERE deleted_at IS NOT NULL;

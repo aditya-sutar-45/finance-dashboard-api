@@ -63,6 +63,7 @@ func loadAuthRoutes(router chi.Router, h *handler.Handler) {
 	// Protected routes
 	router.Group(func(r chi.Router) {
 		r.Use(handler.GetAuthMiddlwareFunc(h.TokenMaker))
+		r.With(handler.RequireRole(token.RoleAdmin)).Get("/deleted", h.GetDeletedUsers)
 
 		r.Get("/logout", h.LogoutUser)
 
